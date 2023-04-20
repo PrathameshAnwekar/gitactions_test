@@ -18,25 +18,6 @@ jobs:
 
       - name: Gradle cache
         uses: gradle/gradle-build-action@v2
-      
-      - name: AVD cache
-        uses: actions/cache@v3
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.api-level }}
-      
-      # - name: create AVD and generate snapshot for caching
-      #   if: steps.avd-cache.outputs.cache-hit != 'true'
-      #   uses: reactivecircus/android-emulator-runner@v2
-      #   with:
-      #     api-level: ${{ matrix.api-level }}
-      #     force-avd-creation: false
-      #     emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      #     disable-animations: false
-      #     script: echo "Generated AVD snapshot for caching."
 
       - uses: actions/setup-java@v3
         with:
@@ -58,7 +39,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedCheck && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/dummy_test.dart
+          script: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/dummy_test.dart
           arch: x86_64
           profile: Nexus 6
           # script: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/dummy_test.dart
