@@ -15,13 +15,11 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v2.10.0
         with:
           flutter-version: '2.8.1'
           channel: 'stable'
-          
-      - name: Setup Dart SDK
-        uses: dart-lang/setup-dart@v1.5.0
+
 
       # Run integration test
       - name: Run Flutter Driver tests
