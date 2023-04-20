@@ -1,0 +1,41 @@
+version: 2.1
+
+orbs:
+  android: circleci/android@2.1.2
+  flutter-orb: circleci/flutter@1.1.0
+  ruby: circleci/ruby@1.8.0
+  macos: circleci/macos@2.3.1
+
+jobs:
+  integration_test_android:
+    executor:
+      name: android/android-machine
+      resource-class: xlarge
+      tag: 2022.03.1
+    steps:
+      - checkout
+      - flutter-orb/install_sdk_and_pub:
+          cache-version: machine
+          flutter_version: 2.10.3
+      - android/create-avd:
+          avd-name: flutter
+          install: true
+          system-image: system-images;android-29;default;x86
+      - android/start-emulator:
+          avd-name: flutter
+          post-emulator-launch-assemble-command: 'flutter build apk --debug'
+          restore-gradle-cache-find-args: ./android -name 'build.gradle'
+      - android/run-tests:
+          test-command: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/dummy_test.dart
+      - store_artifacts:
+          path: ozzie
+
+workflows:
+  test_and_distribute:
+    jobs:
+      - flutter-orb/unit_test:
+          version: 2.10.3
+      - flutter-orb/lint:
+          version: 2.10.3
+      - integration_test_android
+      
