@@ -1,27 +1,34 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+
 import 'package:gitactions_test/main.dart' as app;
 
 void main() {
-  group('Counter App Integration Test', () {
-    testWidgets('Test Counter Increment', (WidgetTester tester) async {
-      // Build the widget tree.
+  final binding = IntegrationTestWidgetsFlutterBinding();
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  group('increment', () {
+    testWidgets('success', (WidgetTester tester) async {
       app.main();
+      await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
 
-      // Find the increment button.
-      final incrementButton = find.byKey(const ValueKey('incrementButton'));
+      await binding.takeScreenshot('test-screenshot');
 
-      // Verify that the counter starts at 0.
+      // Verify the counter starts at 0.
       expect(find.text('0'), findsOneWidget);
 
-      // Tap the increment button.
-      await tester.tap(incrementButton);
+      // Finds the floating action button to tap on.
+      final Finder fab = find.byKey(const ValueKey('incrementButton'));
 
-      // Rebuild the widget tree after the state has changed.
-      await tester.pump();
+      // Emulate a tap on the floating action button.
+      await tester.tap(fab);
 
-      // Verify that the counter has incremented to 1.
+      // Trigger a frame.
+      await tester.pumpAndSettle();
+
+      // Verify the counter increments by 1.
       expect(find.text('1'), findsOneWidget);
     });
   });
